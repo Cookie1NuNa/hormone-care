@@ -348,49 +348,45 @@ def display_hormone_guide(day):
     st.caption("💪 오늘도 내 몸 주식회사의 CEO로서 파이팅하세요!")
 
 # --- 3. 메인 실행 화면 ---
-st.header("📑 내 몸 경영 전략보고서")
 
 saved_date = load_date()
 
 # 사이드바 설정 부분
 with st.sidebar:
-    # 1. 타이틀 (사용자 명패)
+    # 1. 타이틀 (ID 카드)
     st.title("🆔 ID Card")
     
-    # 이름을 입력받아서 변수에 저장 (기본값: CEO)
-    user_name = st.text_input("성함(직함)을 입력하세요", value="대표이사")
-    
-    st.success(f"반갑습니다, **{user_name}** 님! 👋")
+    # [수정] 이름을 입력받지만, 기본값(value)을 미리 넣어둬서 입력 안 해도 작동하게 함!
+    user_name = st.text_input("사용자 이름 (수정 가능)", value="멋진 CEO")
     
     st.divider() # 구분선
     
     # 2. 기존 설정 메뉴
-    st.header("⚙️ CEO 집무실 (설정)")
+    st.header("⚙️ 설정 (My Room)")
     
-    # ... (나머지 코드)
     if saved_date:
-        st.write(f"📅 마지막 대청소 시작일(생리): `{saved_date}`")
+        st.write(f"📅 마지막 생리 시작일: `{saved_date}`")
     
     new_date = st.date_input("날짜 수정하기", 
                              value=datetime.datetime.strptime(saved_date, "%Y-%m-%d").date() if saved_date else datetime.date.today())
     
-    if st.button("결재(저장)"):
+    if st.button("날짜 저장"):
         save_date(str(new_date))
-        st.success("승인 완료! 새로고침됩니다.")
+        st.success("저장 완료! 새로고침됩니다.")
         st.rerun()
 
 # 메인 로직 실행
 if saved_date:
     current_day = calculate_cycle_day(saved_date)
     
-    # [추가] 사이드바에서 입력받은 이름(user_name)을 제목에 반영!
-    st.title(f"📑 {user_name}의 경영 전략보고서") 
+    # [수정] 입력된 이름(user_name)이 제목에 자동 반영
+    st.title(f"📑 {user_name}의 컨디션 보고서") 
     
     if current_day:
         
         display_dry_skin_habit() # 상시 지침 (건성)
         
-        st.divider() # 구분선 하나 넣어주면 더 깔끔합니다
+        st.divider() # 구분선
         
         display_hormone_guide(current_day) # 오늘의 리포트
     else:
@@ -398,4 +394,4 @@ if saved_date:
 else:
     # 날짜 입력 전 대기 화면
     st.title(f"👋 환영합니다, {user_name} 님!")
-    st.warning("👈 왼쪽 메뉴에서 '마지막 생리 시작일'을 입력하고 결재를 눌러주세요!")
+    st.warning("👈 왼쪽 메뉴에서 '마지막 생리 시작일'을 입력하고 저장을 눌러주세요!")
