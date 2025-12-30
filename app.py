@@ -265,10 +265,11 @@ def display_hormone_guide(day):
 saved_date = load_date()
 
 # 사이드바 설정 부분
+# --- [수정] 사이드바 설정 부분 ---
 with st.sidebar:
-    
     st.header("⚙️ 설정 (My Room)")
     
+    # 1. 날짜 설정
     if saved_date:
         st.write(f"📅 마지막 생리 시작일: `{saved_date}`")
     
@@ -279,6 +280,29 @@ with st.sidebar:
         save_date(str(new_date))
         st.success("저장 완료! 새로고침됩니다.")
         st.rerun()
+
+    st.divider() # 구분선
+
+    # 2. [추가됨] 디바이스 스케줄 (접이식 메뉴)
+    st.subheader("🗓️ 디바이스 결재판")
+    
+    # expanded=False로 하면 처음에 접혀있어서 깔끔합니다.
+    with st.expander("📡 초음파 모드 월간 계획표 (Click)", expanded=False):
+        st.markdown("""
+        **1주차 (Day 1~5) : 생리기**
+        > ⛔ **[휴업]** > 피부 장벽이 가장 약해요. 기기 사용을 **완전히 쉽니다.**
+        
+        **2주차 (Day 6~13) : 난포기**
+        > ✅ **[황금기 결재]** > 회복력 최고조! **탄력 개선 효과**가 가장 좋은 시기입니다. (1회)
+        
+        **3주차 (Day 14~20) : 배란~황체**
+        > 💆‍♀️ **[집중 관리]** > 피부가 거칠어질 때입니다. **영양 공급**을 위해 사용하세요. (1회)
+        
+        **4주차 (Day 21~28) : 생리 전**
+        > ⚠️ **[조건부 결재]** > 트러블이 올라오면 **PASS**, 괜찮으면 가볍게 진행합니다. (0~1회)
+        """)
+        
+    st.caption("※ 초음파는 주 1~2회 권장")
 
 # 메인 로직 실행
 if saved_date:
