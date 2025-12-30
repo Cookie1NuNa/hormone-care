@@ -55,7 +55,7 @@ def display_dry_skin_habit():
         **4. 믹스(Mix) 기술 활용**
         * 피부가 유독 당기는 날엔 크림에 **'페이스 오일'**을 1~2방울 섞으세요.
         
-        **🍯 [NEW] 휴대용 소방관 (멀티밤)**
+        **🍯 휴대용 소방관 (멀티밤)**
         * 갖고 계신 **'CNP 프로폴리스 밤'**은 건조할 때마다 수시로 바르세요.
         * 눈가, 입가, 팔자 주름, 목주름 등 건조한 부위에 즉시 수분 충전!
         * ⚠️ **주의:** 사용 후엔 티슈로 스틱을 닦아야 트러블이 안 납니다!
@@ -68,9 +68,23 @@ def display_hormone_guide(day):
     st.markdown(f"#### 🧸 오늘의 보고서: **Day {day}**")
     
     # [공통] 아침 루틴 정의 (모든 날짜에 동일하게 적용)
-    # 악건성 피부를 위한 '방어 위주' 아침 루틴
-    common_morning = make_routine(['물세안', '💧디오디너리 히알루론산', '프리메이 수분크림', '🧴선크림(꼼꼼히!)'])
-    
+    # 악건성 피부를 위한 '방어 위주' 아침 루틴(선택하기)
+   # [추가됨] 1. 여기서 피부 상태를 바로 선택합니다. (공간 절약을 위해 라벨 숨김 옵션도 가능)
+    skin_condition = st.selectbox(
+        "👇 오늘 아침 피부 상태는 어떤가요? (세안법 결정)",
+        ["CASE 1. 평소/건조함 (당김)", "CASE 2. T존 번들거림 (생리전/배란기)", "CASE 3. 어제 무거운 팩 함 (잔여물)"]
+    )
+
+    # [추가됨] 2. 선택에 따라 세안법(첫 번째 단계) 자동 결정
+    if "CASE 1" in skin_condition:
+        cleanser = "💦물세안(가볍게)"
+    else:
+        # CASE 2, 3은 폼클렌징
+        cleanser = "☁️약산성 폼(소량)"
+
+    # [수정됨] 3. 결정된 세안법(cleanser)을 리스트 맨 앞에 넣습니다.
+    # 기존: ['세안(🔽선택하기)', ...] -> 수정: [cleanser, ...]
+    common_morning = make_routine([cleanser, '💧디오디너리 히알루론산', '프리메이 수분크림', '🧴선크림(꼼꼼히!)'])
     # [유형파악] <여성 호르몬 수치별 3가지 유형>
     with st.expander("ℹ️ <여성 호르몬 수치별 3가지 유형> (나는 어디에 속할까?)"):
         st.caption("사람마다 회사의 '자본금(호르몬 양)'이 다릅니다. 내 유형을 알면 공략법이 보입니다!")
@@ -128,11 +142,9 @@ def display_hormone_guide(day):
     # 1. 생리기 (Day 1 ~ 5)
     if 1 <= day <= 5:
         st.error(f"### 🩸 1. 생리기: 대청소 & 휴식 기간 (Day {day})")
-        st.caption("🏢 현재 상황: 호르몬 직원들이 다 퇴근하고 청소(생리) 중이에요.")
         
         if day <= 2:
             st.markdown("#### 🚨 1단계: 폭풍의 시작 (Day 1~2)")
-            st.info("**💬 현실 해석:** 몸도 기분도 축 처지는 날입니다. 배 아프고 까칠해도 자책하지 말고 푹 쉬세요.")
             st.markdown("**🧖‍♀️ [피부팀 보고]** 방어막이 약해져서 엄청 예민하고 건조해요. 기능성 화장품 금지!")
             
             st.write("---")
@@ -142,7 +154,6 @@ def display_hormone_guide(day):
             
         elif day <= 4:
             st.markdown("#### 🧹 2단계: 조금씩 살아나는 중 (Day 3~4)")
-            st.info("**💬 현실 해석:** 고비는 넘겼지만 수분이 빠져나가 **엄청 건조**합니다.")
             st.markdown("**🧖‍♀️ [피부팀 보고]** 트러블은 가라앉았지만 푸석푸석해요. 물을 주세요!")
             
             st.write("---")
@@ -151,7 +162,6 @@ def display_hormone_guide(day):
             
         else: # Day 5
             st.markdown("#### 🌱 3단계: 황금기 준비 (Day 5)")
-            st.info("**💬 현실 해석:** 드디어 몸이 가벼워집니다! 내일부터 시작될 **'피부 전성기'**를 준비하세요.")
             st.markdown("**🧖‍♀️ [피부팀 보고]** 묵은 각질을 살살 청소하고, 미백 앰플을 꺼내두세요.")
             
             st.write("---")
@@ -162,7 +172,6 @@ def display_hormone_guide(day):
     elif 6 <= day <= 13:
         st.success(f"### 📈 2. 난포기: 황금기 & 리즈 갱신 (Day {day})")
         st.caption("🏢 현재 상황: 에스트로겐(미모 담당)이 출근해서 지원금을 펑펑 쓰고 있어요! ✨")
-        st.info("**💬 현실 해석:** 피부와 컨디션 최상! 다이어트, 소개팅, 고기능성 화장품 다 지금 하세요.")
 
         # 일자별 상세 루틴
         if day == 6:
@@ -211,7 +220,6 @@ def display_hormone_guide(day):
         
         if day == 14:
             st.caption("🏢 현재 상황: 난자(신제품) 출시 파티 중! 폭죽 터지고 난리 났어요.")
-            st.info("**💬 현실 해석:** 가장 예뻐 보이는 날이지만, **피지(개기름)가 폭발**할 수 있습니다.")
             st.markdown("#### 🚨 오늘 미션: 개기름 청소 & 열 내리기 (머드팩 금지)")
             
             st.write("---")
@@ -220,7 +228,6 @@ def display_hormone_guide(day):
             
         else: # Day 15~16
             st.caption("🧹 파티 끝! 열 식히는 중")
-            st.info("**💬 현실 해석:** 몸이 뜨끈뜨끈해집니다. 열 때문에 모공이 넓어질 수 있으니 식혀줘야 해요.")
             st.success("✅ **추천:** 알로에 젤이나 차가운 토너로 얼굴 온도 낮추기")
             
             st.write("---")
@@ -231,7 +238,7 @@ def display_hormone_guide(day):
     else:
         st.info(f"### 🛡️ 4. 황체기: 방어 모드 & 존버 (Day {day})")
         st.caption("👮‍♂️ 현재 상황: 보안팀장이 문 잠그고 비상식량(수분, 지방) 쟁여두는 중.")
-        st.markdown("**💬 현실 해석:** 몸이 붓고 예민해집니다. 건성 피부는 **가장 메말라 보일 수 있는 시기**입니다.")
+    
 
         if day <= 22:
             st.markdown("#### 🧱 1단계: 햇빛 & 건조 방어 (Day 17~22)")
@@ -244,7 +251,6 @@ def display_hormone_guide(day):
             
         else: # Day 23~28
             st.markdown("#### 🚨 2단계: 폭동 전야 (생리 전) (Day 23~28)")
-            st.error("**💬 현실 해석:** 호르몬 급락! 짜증나고 트러블 올라오는 최악의 시기. **절대 건드리지 마세요.**")
             st.markdown("**🧖‍♀️ [피부팀 긴급 지침]** 화장품 단계 최소화! 붉은 거 올라오면 패치 붙이고 끝.")
             
             st.write("---")
@@ -261,12 +267,6 @@ saved_date = load_date()
 
 # 사이드바 설정 부분
 with st.sidebar:
-    st.title("🆔 ID Card")
-    
-    # 기본값 설정으로 입력 없이도 사용 가능
-    user_name = st.text_input("사용자 이름 (수정 가능)", value="멋진 CEO")
-    
-    st.divider()
     
     st.header("⚙️ 설정 (My Room)")
     
@@ -285,8 +285,6 @@ with st.sidebar:
 if saved_date:
     current_day = calculate_cycle_day(saved_date)
     
-    # 제목에 이름 자동 반영
-    st.title(f"📑 {user_name}의 컨디션 보고서") 
     
     if current_day:
         display_dry_skin_habit() # 상시 지침 (건성)
@@ -294,5 +292,4 @@ if saved_date:
     else:
         st.error("시스템 오류: 날짜 형식을 확인하세요.")
 else:
-    st.title(f"👋 환영합니다, {user_name} 님!")
     st.warning("👈 왼쪽 메뉴에서 '마지막 생리 시작일'을 입력하고 저장을 눌러주세요!")
