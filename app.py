@@ -67,24 +67,23 @@ def display_hormone_guide(day):
     st.divider()
     st.markdown(f"#### 🧸 오늘의 보고서: **Day {day}**")
     
-    # [공통] 아침 루틴 정의 (모든 날짜에 동일하게 적용)
-    # 악건성 피부를 위한 '방어 위주' 아침 루틴(선택하기)
-   # [추가됨] 1. 여기서 피부 상태를 바로 선택합니다. (공간 절약을 위해 라벨 숨김 옵션도 가능)
+    # -----------------------------------------------------------
+    # [1] 아침 세안법 결정 (여기가 가장 먼저 실행되어야 함!)
+    # -----------------------------------------------------------
     skin_condition = st.selectbox(
         "👇 오늘 아침 피부 상태는 어떤가요? (세안법 결정)",
         ["CASE 1. 평소/건조함 (당김)", "CASE 2. T존 번들거림 (생리전/배란기)", "CASE 3. 어제 무거운 팩 함 (잔여물)"]
     )
 
-    # [추가됨] 2. 선택에 따라 세안법(첫 번째 단계) 자동 결정
+    # 선택에 따라 세안제 변수 설정
     if "CASE 1" in skin_condition:
         cleanser = "💦물세안(가볍게)"
     else:
-        # CASE 2, 3은 폼클렌징
         cleanser = "☁️약산성 폼(소량)"
 
-    # [수정됨] 3. 결정된 세안법(cleanser)을 리스트 맨 앞에 넣습니다.
-    # 기존: ['세안(🔽선택하기)', ...] -> 수정: [cleanser, ...]
+    # 'common_morning' 변수 완성 (이 변수가 아래 모든 아침 루틴에 들어갑니다)
     common_morning = make_routine([cleanser, '💧디오디너리 히알루론산', '프리메이 수분크림', '🧴선크림(꼼꼼히!)'])
+
     # [유형파악] <여성 호르몬 수치별 3가지 유형>
     with st.expander("ℹ️ <여성 호르몬 수치별 3가지 유형> (나는 어디에 속할까?)"):
         st.caption("사람마다 회사의 '자본금(호르몬 양)'이 다릅니다. 내 유형을 알면 공략법이 보입니다!")
@@ -224,7 +223,7 @@ def display_hormone_guide(day):
             
             st.write("---")
             st.success(f"☀️ 아침: {common_morning}")
-            st.warning(f"🌙 저녁: {make_routine(['오일클렌징(코 집중)', '토너', '🧊모델링팩(또는 토리든)', '프리메이 수분크림'])}")
+            st.warning(f"🌙 저녁: {make_routine(['오일클렌징(코 집중)', '토너', '🧊토리든 마스크팩', '프리메이 수분크림'])}")
             
         else: # Day 15~16
             st.caption("🧹 파티 끝! 열 식히는 중")
@@ -247,7 +246,7 @@ def display_hormone_guide(day):
             
             st.write("---")
             st.success(f"☀️ 아침: {common_morning}")
-            st.info(f"🌙 저녁: {make_routine(['토너', '💧디오디너리 히알루론산', '🛡️마데카/세타필', '🧊모델링팩(선택)'])}")
+            st.info(f"🌙 저녁: {make_routine(['토너', '💧디오디너리 히알루론산 / 토리든+디바이스(흡수모드)','🛡️마데카/세타필'])}")
             
         else: # Day 23~28
             st.markdown("#### 🚨 2단계: 폭동 전야 (생리 전) (Day 23~28)")
@@ -255,7 +254,7 @@ def display_hormone_guide(day):
             
             st.write("---")
             st.success(f"☀️ 아침: {common_morning}")
-            st.error(f"🌙 저녁: {make_routine(['약산성 세안', '토너', '🛡️시카밤(하나만)', '트러블패치'])}")
+            st.error(f"🌙 저녁: {make_routine(['약산성 세안', '토너', '🛡️시카밤(두껍게)+디바이스(초음파모드,1회)', '트러블패치'])}")
 
     # 공통 하단 메시지
     st.divider()
