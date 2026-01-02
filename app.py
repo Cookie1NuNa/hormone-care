@@ -118,7 +118,7 @@ def display_hormone_guide(day):
             with col1:
                 show_routine_list("아침 (수분)", "success", morning_routine)
             with col2:
-                night_routine = {"결정돈": "☁️ 토너", "스페셜": "🧖‍♀️수분 팩(15분)", "수분": "💧히알루론산", "잠금": "🛡️마데카/시카밤"}
+                night_routine = {"결정돈": "☁️ 토너", "스페셜": "🧖‍♀️:violet[수분 팩(15분)]", "수분": "💧히알루론산", "잠금": "🛡️마데카/시카밤"}
                 show_routine_list("저녁 (수분충전)", "info", night_routine)
             
             st.markdown("---")
@@ -132,7 +132,7 @@ def display_hormone_guide(day):
             with col1:
                 show_routine_list("아침 (수분)", "success", morning_routine)
             with col2:
-                night_routine = {"딥클렌징": "📍효소파우더", "결정돈": "☁️ 토너", "수분": "💧히알루론산", "진정": "🛡️마데카/시카밤"}
+                night_routine = {"딥클렌징": "📍violet:[효소파우더]", "결정돈": "☁️ 토너", "수분": "💧히알루론산", "진정": "🛡️마데카/시카밤"}
                 show_routine_list("저녁 (각질제거)", "info", night_routine)
 
     # -------------------------------
@@ -149,10 +149,10 @@ def display_hormone_guide(day):
             with col1:
                 show_routine_list("아침 (수분)", "success", morning_routine)
             with col2:
-                night_routine = {"결정돈": "☁️ 토너", "미백": "🍋비타민C", "진정팩": "🧖‍♀️토리든 팩", "마무리": "🛡️마데카/시카밤"}
+                night_routine = {"결정돈": "☁️ 토너", "미백": "🍋:violet[비타민C]", "진정팩": "🧖‍♀️:violet[토리든 팩]", "마무리": "🛡️마데카/시카밤"}
                 show_routine_list("저녁 (미백)", "warning", night_routine)
             
-            st.markdown("<small>⚠️ 비타민C는 따가울 수 있습니다. 직후 자외선 노출 주의.</small>", unsafe_allow_html=True)
+            st.markdown("<small>⚠️ 비타민C는 따가울 수 있습니다. 형광등도 조심하면 좋음.</small>", unsafe_allow_html=True)
 
         # Day 7
         elif day == 7:
@@ -162,7 +162,7 @@ def display_hormone_guide(day):
             with col1:
                 show_routine_list("아침 (수분)", "success", morning_routine)
             with col2:
-                night_routine = {"결정돈": "☁️ 토너", "수분": "💧히알루론산(듬뿍)", "기기": "💡알부틴+디바이스", "마무리": "🛡️마데카/시카밤"}
+                night_routine = {"결정돈": "☁️ 토너", "수분": "💧히알루론산(듬뿍)", "기기": "💡:violet[알부틴+디바이스]", "마무리": "🛡️마데카/시카밤"}
                 show_routine_list("저녁 (기기관리)", "warning", night_routine)
 
         # Day 8
@@ -173,10 +173,10 @@ def display_hormone_guide(day):
             with col1:
                 show_routine_list("아침 (수분)", "success", morning_routine)
             with col2:
-                night_routine = {"부스팅": "⚡VT 리들샷", "결정돈": "☁️ 토너", "수분": "💧히알루론산", "진정": "🛡️시카밤(보습폭탄)"}
+                night_routine = {"부스팅": "⚡:violet[VT 리들샷]", "결정돈": "☁️ 토너", "수분": "💧히알루론산", "진정": "🛡️:violet[시카밤(보습폭탄)]"}
                 show_routine_list("저녁 (모공)", "warning", night_routine)
             
-            st.markdown("<small>⚠️ 리들샷 사용 시 비타민C와 동시 사용 금지.</small>", unsafe_allow_html=True)
+            st.markdown("<small>⚠️ 리들샷 사용 시 꾹꾹 눌러주기.</small>", unsafe_allow_html=True)
 
         # Day 9
         elif day == 9:
@@ -186,7 +186,7 @@ def display_hormone_guide(day):
             with col1:
                 show_routine_list("아침 (수분)", "success", morning_routine)
             with col2:
-                night_routine = {"결정돈": "☁️ 토너", "수분": "💧히알루론산", "모공": "🧴크림+나이아신", "보습막": "크림 한겹 더"}
+                night_routine = {"결정돈": "☁️ 토너", "수분": "💧히알루론산", "모공": "🧴:violet[크림+나이아신]", "보습막": "크림 한겹 더"}
                 show_routine_list("저녁 (모공)", "warning", night_routine)
 
         # Day 10~13
@@ -197,7 +197,7 @@ def display_hormone_guide(day):
             with col1:
                 show_routine_list("아침 (수분)", "success", morning_routine)
             with col2:
-                night_routine = {"결정돈": "☁️ 토너", "수분": "💧히알루론산", "수분팩": "🧖‍♀️수분 마스크팩", "마무리": "🛡️마데카 크림"}
+                night_routine = {"결정돈": "☁️ 토너", "수분": "💧히알루론산", "수분팩": "🧖‍♀️:violet[수분 마스크팩]", "마무리": "🛡️마데카 크림"}
                 show_routine_list("저녁 (물광)", "warning", night_routine)
 
     # -------------------------------
@@ -214,7 +214,7 @@ def display_hormone_guide(day):
             with col1:
                 show_routine_list("아침 (수분)", "success", morning_routine)
             with col2:
-                night_routine = {"딥클렌징": "오일(코 집중)", "결정돈": "☁️ 토너", "쿨링팩": "🧊토리든 팩(차갑게)", "마무리": "수분크림"}
+                night_routine = {"딥클렌징": "오일(코 집중)", "결정돈": "☁️ 토너", "쿨링팩": "🧊:violet[토리든 팩(차갑게)]", "마무리": "수분크림"}
                 show_routine_list("저녁 (피지조절)", "warning", night_routine)
 
         # Day 15~16
@@ -225,7 +225,7 @@ def display_hormone_guide(day):
             with col1:
                 show_routine_list("아침 (수분)", "success", morning_routine)
             with col2:
-                night_routine = {"쿨링": "🧊차가운 닥토", "수분": "💧히알루론산", "진정": "알로에/프리메이", "마무리": "🛡️시카밤(얇게)"}
+                night_routine = {"쿨링": "🧊차가운 닥토", "수분": "💧히알루론산", "진정": "🧴프리메이", "마무리": "🛡️시카밤(얇게)"}
                 show_routine_list("저녁 (쿨링)", "warning", night_routine)
 
     # -------------------------------
@@ -242,7 +242,7 @@ def display_hormone_guide(day):
             with col1:
                 show_routine_list("아침 (수분)", "success", morning_routine)
             with col2:
-                night_routine = {"결정돈": "☁️ 토너", "집중케어": "💧히알루론산(2겹)", "고보습": "🛡️마데카/세타필"}
+                night_routine = {"결정돈": "☁️ 토너", "집중케어": "💧:violet[히알루론산(2겹)]", "고보습": "🛡️마데카/세타필"}
                 show_routine_list("저녁 (보습저장)", "info", night_routine)
             
             st.markdown("<small>⚠️ 속은 건조하고 겉은 번들거립니다. 수분을 채워주세요.</small>", unsafe_allow_html=True)
