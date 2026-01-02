@@ -3,7 +3,7 @@ import datetime
 import os
 
 # --- 1. 기본 설정 및 함수 ---
-DB_FILE = "last_period.txt"
+DB_FILE = "last_period_2.txt"
 
 def save_date(date_str):
     with open(DB_FILE, "w", encoding="utf-8") as f:
