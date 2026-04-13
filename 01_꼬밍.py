@@ -1,32 +1,39 @@
 import streamlit as st
+from streamlit_gsheets import GSheetsConnection
+import pandas as pd
 import datetime
-import os
 
-# --- 1. 기본 설정 및 함수 ---
-# --- [수정 포인트] 파일 경로를 '절대 경로'로 고정 ---
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(CURRENT_DIR)
-DB_FILE = os.path.join(ROOT_DIR, "last_period_kkoming.txt")
+# 1. 구글 시트 연결 설정
+conn = st.connection("gsheets", type=GSheetsConnection)
 
-def save_date(date_str):
-    with open(DB_FILE, "w", encoding="utf-8") as f:
-        f.write(date_str)
-
-def load_date():
-    if os.path.exists(DB_FILE):
-        with open(DB_FILE, "r", encoding="utf-8") as f:
-            return f.read().strip()
-    return None
-
-def calculate_cycle_day(start_date_str):
+# 2. 날짜 불러오기 함수
+def load_user_data(user_name):
     try:
-        start_date = datetime.datetime.strptime(start_date_str, "%Y-%m-%d").date()
-        today = datetime.date.today()
-        delta = today - start_date
-        return (delta.days % 28) + 1
+        df = conn.read() # 시트 읽어오기
+        user_row = df[df['name'] == user_name]
+        if not user_row.empty:
+            return user_row.iloc[0]['date'], int(user_row.iloc[0]['cycle'])
     except:
-        return None
+        pass
+    # 데이터가 없으면 기본값 (봉이 30, 동생 28)
+    return str(datetime.date.today()), (30 if user_name == "봉이" else 28)
 
+# 3. 날짜 저장하기 함수
+def save_user_data(user_name, date_str, cycle):
+    df = conn.read()
+    
+    # 기존 데이터가 있으면 업데이트, 없으면 추가
+    if user_name in df['name'].values:
+        df.loc[df['name'] == user_name, ['date', 'cycle']] = [date_str, cycle]
+    else:
+        new_data = pd.DataFrame([{"name": user_name, "date": date_str, "cycle": cycle}])
+        df = pd.concat([df, new_data], ignore_index=True)
+    
+    # 구글 시트에 다시 쓰기
+    conn.update(data=df)
+    st.cache_data.clear() # 캐시 삭제해서 바로 반영되게!
+    
+    
 # [핵심 수정] 루틴 박스 디자인 개선
 def show_routine_list(title, color_style, routine_items):
     # 색상 스타일 적용
