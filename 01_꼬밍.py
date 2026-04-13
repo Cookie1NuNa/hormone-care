@@ -9,8 +9,8 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 def load_user_data():
     try:
         df = conn.read()
-        # 공통 이름인 "MyRoutine"으로 저장하고 불러옴
-        user_row = df[df['name'] == "MyRoutine"]
+        # 여기는 "꼬밍"을 찾아라!
+        user_row = df[df['name'] == "꼬밍"] 
         if not user_row.empty:
             return user_row.iloc[0]['date']
     except:
@@ -19,10 +19,11 @@ def load_user_data():
 
 def save_user_data(date_str):
     df = conn.read()
-    if "MyRoutine" in df['name'].values:
-        df.loc[df['name'] == "MyRoutine", 'date'] = date_str
+    # 여기는 "꼬밍" 자리에 저장!
+    if "꼬밍" in df['name'].values:
+        df.loc[df['name'] == "꼬밍", 'date'] = date_str
     else:
-        new_row = pd.DataFrame([{"name": "MyRoutine", "date": date_str}])
+        new_row = pd.DataFrame([{"name": "꼬밍", "date": date_str, "cycle": 28}])
         df = pd.concat([df, new_row], ignore_index=True)
     conn.update(data=df)
     st.cache_data.clear()
