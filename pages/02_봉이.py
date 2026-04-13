@@ -3,11 +3,16 @@ import datetime
 import os
 
 # --- 1. 기본 설정 및 함수 ---
-DB_FILE = "last_period_2.txt"
+# --- [수정 포인트] 파일 경로를 '절대 경로'로 고정 ---
+# 현재 실행 중인 파일(02_봉이.py)의 위치를 기준으로 한 단계 위(루트 폴더)를 찾음
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__)) # pages 폴더 위치
+ROOT_DIR = os.path.dirname(CURRENT_DIR) # 프로젝트 최상위 폴더 위치
+DB_FILE = os.path.join(ROOT_DIR, "last_period_bong.txt") # 봉이 전용 메모장
 
 def save_date(date_str):
     with open(DB_FILE, "w", encoding="utf-8") as f:
         f.write(date_str)
+    # 저장이 확실히 되도록 파일 리스트 새로고침은 Streamlit이 알아서 함
 
 def load_date():
     if os.path.exists(DB_FILE):
@@ -15,12 +20,13 @@ def load_date():
             return f.read().strip()
     return None
 
+# 주기 계산 (봉이는 30일!)
 def calculate_cycle_day(start_date_str):
     try:
         start_date = datetime.datetime.strptime(start_date_str, "%Y-%m-%d").date()
         today = datetime.date.today()
         delta = today - start_date
-        return (delta.days % 28) + 1
+        return (delta.days % 30) + 1 
     except:
         return None
 

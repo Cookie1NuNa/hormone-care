@@ -3,7 +3,10 @@ import datetime
 import os
 
 # --- 1. 기본 설정 및 함수 ---
-DB_FILE = "last_period.txt"
+# --- [수정 포인트] 파일 경로를 '절대 경로'로 고정 ---
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(CURRENT_DIR)
+DB_FILE = os.path.join(ROOT_DIR, "last_period_kkoming.txt")
 
 def save_date(date_str):
     with open(DB_FILE, "w", encoding="utf-8") as f:
