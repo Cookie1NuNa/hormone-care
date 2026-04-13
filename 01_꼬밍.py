@@ -32,7 +32,15 @@ def save_user_data(user_name, date_str, cycle):
     # 구글 시트에 다시 쓰기
     conn.update(data=df)
     st.cache_data.clear() # 캐시 삭제해서 바로 반영되게!
-    
+
+def calculate_cycle_day(start_date_str, cycle_len):
+    try:
+        start_date = datetime.datetime.strptime(start_date_str, "%Y-%m-%d").date()
+        today = datetime.date.today()
+        delta = today - start_date
+        return (delta.days % cycle_len) + 1
+    except:
+        return None  
     
 # [핵심 수정] 루틴 박스 디자인 개선
 def show_routine_list(title, color_style, routine_items):
@@ -273,26 +281,29 @@ def display_hormone_guide(day):
     st.divider()
 
 # --- 3. 메인 실행 화면 ---
-saved_date = load_date()
+saved_date, saved_cycle = load_user_data("꼬밍") 
 
-# [수정] 사이드바 디자인 및 줄바꿈 개선
 with st.sidebar:
     st.header("⚙️ My Room")
     
     if saved_date:
         st.write(f"📅 마지막 생리일: `{saved_date}`")
+        st.write(f"🔄 설정된 주기: `{saved_cycle}일`")
     
+    # 주기와 날짜 수정창
+    new_cycle = st.number_input("내 생리 주기 (일)", min_value=21, max_value=35, value=saved_cycle)
     new_date = st.date_input("날짜 수정", 
                              value=datetime.datetime.strptime(saved_date, "%Y-%m-%d").date() if saved_date else datetime.date.today())
     
-    if st.button("날짜 저장"):
-        save_date(str(new_date))
-        st.success("저장 완료!")
+    if st.button("설정 저장"):
+        # [수정된 부분] 옛날 save_date() 대신 구글 시트 저장 함수 사용!
+        save_user_data("꼬밍", str(new_date), new_cycle)
+        st.success("꼬밍님의 데이터가 구글 시트에 저장 완료!")
         st.rerun()
 
     st.divider()
+    st.subheader("🗓️ 주기별 디바이스 가이드")
 
-    st.subheader("🗓️ 디바이스 결재판")
     # [수정] 사이드바 가독성 개선 (마크다운 리스트 활용)
     with st.expander("📡 초음파 모드 계획표", expanded=True):
         st.markdown("""
@@ -308,12 +319,14 @@ with st.sidebar:
         * **4. 생리전 (Day 21~28)**
             * ⚠️ **주의** (트러블 시 중단)
         """)
-
+    st.info(f"현재 설정: {saved_cycle}일 주기")
+    
 # 메인 실행
 if saved_date:
-    current_day = calculate_cycle_day(saved_date)
+    # calculate_cycle_day 함수에 주기(saved_cycle) 변수도 같이 넘겨주기
+    current_day = calculate_cycle_day(saved_date, saved_cycle) # 꼬밍 파일에서는 28일로 고정되어 있다면 이대로 둬도 됨!
     if current_day:
-        display_hormone_guide(current_day)
+        display_hormone_guide(current_day) # (이전에 만든 호르몬 가이드 함수 이름이 맞는지 확인해!)
     else:
         st.error("날짜 형식 오류")
 else:
