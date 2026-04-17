@@ -9,7 +9,7 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 def load_user_data():
     try:
         df = conn.read()
-        # "MyRoutine" 대신 "봉이"를 찾아라!
+        # "봉이"를 찾아라!
         user_row = df[df['name'] == "봉이"] 
         if not user_row.empty:
             return user_row.iloc[0]['date']
@@ -19,7 +19,7 @@ def load_user_data():
 
 def save_user_data(date_str):
     df = conn.read()
-    # "MyRoutine" 대신 "봉이" 자리에 저장해라!
+    # "봉이" 자리에 저장해라!
     if "봉이" in df['name'].values:
         df.loc[df['name'] == "봉이", 'date'] = date_str
     else:
@@ -51,7 +51,7 @@ def show_routine_box(time, title, items):
     for item in items:
         st.markdown(f"▪️ {item}")
 
-# --- 3. ⭐️ 내 몸 주식회사 가이드 (효과 추가 & 세로 정렬) ---
+# --- 3. ⭐️ 내 몸 주식회사 가이드 ---
 def display_hormone_guide(day):
     progress_val = min(day / 28, 1.0)
     st.progress(progress_val, text=f"현재 {day}일차 / 28일 주기 ({int(progress_val*100)}%) 진행 중")
@@ -171,6 +171,24 @@ def display_hormone_guide(day):
                 "녹두 모델링팩 (피지 흡착 & 수분 진정 🌿)",
                 "시카플라스트 밤 (장벽 마무리)"
             ])
+
+    # --- 💡 루틴 박스 바로 아래 고정되는 사용법 가이드 ---
+    st.divider()
+    st.markdown("### 💡 잊지 말자! 핵심 무기 사용법 & 정량")
+    st.info("""
+    **🍋 1. 코스알엑스 비타민C 23 & ✨ 기타 세럼류**
+    * **비타민C 정량:** 양볼/이마 각 1방울 (총 2~3방울 💧)
+    * **기타 세럼 정량:** 스포이드 1번 펌핑 (강낭콩 한 알 크기 🫘)
+    * **사용법:** 욕심내지 말고 얇게 펴 바른 후 손바닥 온기로 꾹꾹 눌러 흡수시켜 줘! 여러 앰플을 겹쳐 바를 땐 앞 단계가 완전히 흡수되도록 약 1분 정도 간격을 두는 게 좋아.
+
+    **🧫 2. 애크린겔 (바하 - 요철/피지 컨트롤)**
+    * **정량:** 고민 부위 1곳당 **딱 쌀알 한 톨 크기 🌾**
+    * **사용법:** **🚨얼굴 전체 도포 절대 금지!** 기초 케어 마지막 단계나 크림 직전에, 면봉이나 깨끗한 손끝에 덜어서 요철 부위에만 아주 얇게 스치듯 코팅해 줘.
+
+    **💉 3. 보르피린 앰플 (국소 부위 볼륨 충전)**
+    * **정량:** 눈밑/팔자주름 양쪽 다 합쳐서 **딱 1방울 💧**
+    * **사용법:** 손등에 1방울 덜어낸 다음, 네 번째 손가락(약지)으로 꺼진 부위에만 콕콕 찍어서 두드려 발라줘. 전체적으로 바르면 유분 폭발하니 국소 부위만 공략하기!
+    """)
 
 # --- 4. 메인 실행 & 사이드바 화면 ---
 saved_date = load_user_data()
