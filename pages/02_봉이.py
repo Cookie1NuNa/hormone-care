@@ -19,33 +19,6 @@ def load_user_data():
 
 def save_user_data(date_str):
     df = conn.read()
-    # "봉이" 자리에 저장해라!
-    if "봉이" in df['name'].values:
-        df.loc[df['name'] == "봉이", 'date'] = date_str
-    else:
-        new_row = pd.DataFrame([{"name": "봉이", "date": date_str, "cycle": 28}])
-        df = pd.concat([df, new_row], ignore_index=True)
-    conn.update(data=df)import streamlit as st
-from streamlit_gsheets import GSheetsConnection
-import pandas as pd
-import datetime
-
-# --- 1. 구글 시트 및 데이터 기본 설정 ---
-conn = st.connection("gsheets", type=GSheetsConnection)
-
-def load_user_data():
-    try:
-        df = conn.read()
-        # "봉이"를 찾아라!
-        user_row = df[df['name'] == "봉이"] 
-        if not user_row.empty:
-            return user_row.iloc[0]['date']
-    except:
-        pass
-    return str(datetime.date.today()) 
-
-def save_user_data(date_str):
-    df = conn.read()
     # "봉이" 자리에 저장해라! 주기는 31일로 업데이트!
     if "봉이" in df['name'].values:
         df.loc[df['name'] == "봉이", 'date'] = date_str
@@ -155,109 +128,7 @@ def display_hormone_guide(day):
                 "마데카크림 (재생 마무리)"
             ])
 
-    # 🥚 3단계: 배란기 (Day 1
-    st.cache_data.clear()
-
-# 주기는 28일로 고정!
-def calculate_cycle_day(start_date_str):
-    try:
-        start_date = datetime.datetime.strptime(start_date_str, "%Y-%m-%d").date()
-        today = datetime.date.today()
-        delta = today - start_date
-        return (delta.days % 28) + 1
-    except:
-        return None
-
-# --- 2. 루틴 박스 세로 정렬 디자인 ---
-def show_routine_box(time, title, items):
-    if time == "아침":
-        st.success(f"**☀️ 아침: {title}**")
-    elif time == "저녁":
-        st.info(f"**🌙 저녁: {title}**")
-    elif time == "스페셜":
-        st.warning(f"**🌋 스페셜: {title}**")
-    
-    # 리스트로 받은 화장품을 세로로 하나씩 출력
-    for item in items:
-        st.markdown(f"▪️ {item}")
-
-# --- 3. ⭐️ 내 몸 주식회사 가이드 ---
-def display_hormone_guide(day):
-    progress_val = min(day / 28, 1.0)
-    st.progress(progress_val, text=f"현재 {day}일차 / 28일 주기 ({int(progress_val*100)}%) 진행 중")
-
-    st.markdown(f"""
-        <h3 style='text-align: center; margin-bottom: -10px;'>🧸 오늘의 뷰티 보고서: Day {day}</h3>
-        <hr style='margin-top: 15px; margin-bottom: 20px;'>
-        """, unsafe_allow_html=True)
-
-    # 28일 고정 구간
-    phase1_end = 5
-    phase2_end = 13
-    phase3_end = 17
-
-    # 🩸 1단계: 생리 중 (Day 1~5)
-    if 1 <= day <= phase1_end:
-        st.markdown("#### 🩸 1단계: 생리 중 (피부 휴식 & 수분 올인!)")
-        st.caption("🚨 피부 장벽이 제일 약하고 민감한 시기. 무조건 자극을 줄이고 푹 쉬게 해줘야 해! (기기, 리들샷, 효소, 바하 전부 ❌)")
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            show_routine_box("아침", "수분 방어", [
-                "라로슈포제 로션 (장벽/진정)",
-                "매트릭실 (탄력 베이스)",
-                "구달 아이크림 (눈가 미백)",
-                "에스트라 크림 (보습막)",
-                "선크림 (자외선 차단)"
-            ])
-        with col2:
-            show_routine_box("저녁", "장벽 진정", [
-                "더랩 토너 (수분 여러 번 촵촵)",
-                "히알루로닉 앰플 (수분/진정)",
-                "보르피린 (눈밑/팔자 국소 볼륨)",
-                "라로슈포제 시카플라스트 밤 (장벽 진정 듬뿍)"
-            ])
-
-    # ✨ 2단계: 황금기 (Day 6~13)
-    elif phase1_end < day <= phase2_end:
-        st.markdown("#### ✨ 2단계: 생리 후 ~ 배란기 전 (영양 쫙쫙! 깐달걀 황금기)")
-        st.caption("🏆 피부 컨디션 최상! **'리들샷'**과 **'기기 관리'**를 쏟아부어서 안티에이징과 미백을 확 끌어올려야 해.")
-        
-        show_routine_box("아침", "미백 광채 집중 ✨", [
-            "아로마티카 에센스 (항산화/결 정돈)",
-            "나이아신아마이드 + 알파 아르부틴 (잡티 싹! 전체 톤업 💡)",
-            "구달 청귤 아이크림 (눈가 다크서클 환하게 톡톡 🍊)",
-            "에스트라 크림 (수분 코팅)",
-            "선크림 (무조건 듬뿍! 자외선 철벽 방어 🛡️)"
-        ])
-        
-        st.markdown("##### 👇 저녁 루틴 (선택)")
-        tab1, tab2, tab3 = st.tabs(["A. 리들샷 데이(주3회)", "B. 기기 흡수(매일)", "C. 초음파 스페셜(주1회)"])
-        with tab1:
-            show_routine_box("저녁", "리들샷", [
-                "비플레인 LHA 토너 (순한 각질/닦토)",
-                "VT 리들샷 300 (턴오버/길 뚫기)",
-                "알파 아르부틴 (잡티/미백 집중)",
-                "마데카크림 타임리버스 (재생/속탄력)"
-            ])
-        with tab2:
-            show_routine_box("저녁", "기기 흡수 모드", [
-                "더랩 토너 (속건조 방어)",
-                "매트릭실 (전체 탄력)",
-                "나이아신아마이드 (피지/미백)",
-                "마데카 프라임 (흡수모드)",
-                "에스트라 크림 (보습 코팅)"
-            ])
-            st.caption("🚨 주의: 리들샷 쓴 날은 기기 금지!")
-        with tab3:
-            show_routine_box("저녁", "초음파 스페셜", [
-                "셀리맥스 잡티 미백 마스크팩 (황금기 미백 끌올! 팩 얹고 기기 쓰기 ⚡)", # 👈 셀리맥스 팩 추가!
-                "마데카 프라임 (초음파 모드로 깊숙이!)",
-                "보르피린 (눈밑/팔자 콕콕)",
-                "마데카크림 (재생 마무리)"
-            ])
-
-    # 🥚 3단계: 배란기 (Day 14~17)
+    # 🥚 3단계: 배란기 (Day 15~19)
     elif phase2_end < day <= phase3_end:
         st.markdown("#### 🥚 3단계: 배란기 (모공 청소 & 피지 조절)")
         st.caption("🧹 슬슬 피지량이 늘어나기 시작하는 타이밍! 모공이 막히지 않게 새로 산 효소 파우더로 부드럽게 청소해 줄 때야.")
@@ -281,7 +152,7 @@ def display_hormone_guide(day):
                 "에스트라 크림 (마무리 보습)"
             ])
 
-    # 🌋 4단계: 생리 직전 (Day 18~28)
+    # 🌋 4단계: 생리 직전 (Day 20~31)
     else:
         st.markdown("#### 🌋 4단계: 생리 직전 (트러블 방어 & 모공 순삭!)")
         st.caption("🚨 피지 폭발, 요철 대환장 파티 시기! 필살기 조합으로 요철을 잠재워야 해.")
@@ -299,7 +170,6 @@ def display_hormone_guide(day):
         with col2:
             st.markdown("#### 🌟 스페셜 모공 루틴 (택 1)")
             
-            # 선택해서 볼 수 있게 탭 기능을 쓰면 화면이 더 깔끔해!
             tab_a, tab_b = st.tabs(["🅰️ 애크린겔 데이", "🅱️ 딥클렌징&팩 데이"])
             
             with tab_a:
@@ -320,23 +190,6 @@ def display_hormone_guide(day):
                     "시카플라스트 밤 (마무리)"
                 ])
 
-   # --- 💡 루틴 박스 바로 아래 고정되는 사용법 가이드 ---
-    st.divider()
-    st.markdown("### 💡 잊지 말자! 핵심 무기 사용법 & 정량")
-    st.info("""
-    **🧫 1. 애크린겔 (바하 - 요철/피지 컨트롤)**
-    * **정량:** 고민 부위(나비존, 코 등) 1곳당 **딱 쌀알 한 톨 크기 🌾**
-    * **사용법:** **🚨얼굴 전체 도포 절대 금지!** 세안 후 첫 단계나 스킨케어 마무리 쯤에, 깨끗한 손끝에 덜어서 오돌토돌한 요철 부위에만 아주 얇게 스치듯 코팅해 줘.
-
-    **🌿 2. 녹두 모델링팩 (쿨링 & 수분 진정)**
-    * **정량:** 얼굴이 안 보일 정도로 도톰하게 (너무 얇으면 수분을 뺏어가니 주의!)
-    * **사용법:** 애크린겔 바른 날이나 달리기 후 열감이 있을 때 필수! 피부에 수분 앰플이나 부스팅 젤을 듬뿍 바른 뒤, 그 위에 모델링팩을 두껍게 올리고 **딱 15~20분 뒤**에 떼어내기.
-
-    **💉 3. 보르피린 앰플 (국소 부위 볼륨 충전)**
-    * **정량:** 눈밑/팔자주름 양쪽 다 합쳐서 **딱 1방울 💧**
-    * **사용법:** 유분이 아주 많으니 단독 사용보다는 쫀쫀한 크림이나 아이크림에 1방울 섞어 쓰는 걸 추천! 네 번째 손가락(약지)으로 고민 부위에만 콕콕 찍어서 가볍게 두드려 흡수시켜 줘. **🚨절대 문지르기 금지 (잔주름/비립종 유발)!**
-    """)
-
     # --- 💡 루틴 박스 바로 아래 고정되는 사용법 가이드 ---
     st.divider()
     st.markdown("### 💡 잊지 말자! 핵심 무기 사용법 & 정량")
@@ -350,9 +203,13 @@ def display_hormone_guide(day):
     * **정량:** 고민 부위 1곳당 **딱 쌀알 한 톨 크기 🌾**
     * **사용법:** **🚨얼굴 전체 도포 절대 금지!** 기초 케어 마지막 단계나 크림 직전에, 면봉이나 깨끗한 손끝에 덜어서 요철 부위에만 아주 얇게 스치듯 코팅해 줘.
 
-    **💉 3. 보르피린 앰플 (국소 부위 볼륨 충전)**
+    **🌿 3. 녹두 모델링팩 (쿨링 & 수분 진정)**
+    * **정량:** 얼굴이 안 보일 정도로 도톰하게 (너무 얇으면 수분을 뺏어가니 주의!)
+    * **사용법:** 애크린겔 바른 날이나 달리기 후 열감이 있을 때 필수! 피부에 수분 앰플이나 부스팅 젤을 듬뿍 바른 뒤, 그 위에 모델링팩을 두껍게 올리고 **딱 15~20분 뒤**에 떼어내기.
+
+    **💉 4. 보르피린 앰플 (국소 부위 볼륨 충전)**
     * **정량:** 눈밑/팔자주름 양쪽 다 합쳐서 **딱 1방울 💧**
-    * **사용법:** 손등에 1방울 덜어낸 다음, 네 번째 손가락(약지)으로 꺼진 부위에만 콕콕 찍어서 두드려 발라줘. 전체적으로 바르면 유분 폭발하니 국소 부위만 공략하기!
+    * **사용법:** 손등에 1방울 덜어낸 다음, 네 번째 손가락(약지)으로 꺼진 부위에만 콕콕 찍어서 두드려 발라줘. 전체적으로 바르면 유분 폭발하니 국소 부위만 공략하기! 절대 문지르기 금지 (잔주름/비립종 유발)!
     """)
 
 # --- 4. 메인 실행 & 사이드바 화면 ---
