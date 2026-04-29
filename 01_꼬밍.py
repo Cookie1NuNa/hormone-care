@@ -3,6 +3,13 @@ from streamlit_gsheets import GSheetsConnection
 import pandas as pd
 import datetime
 
+
+# --- 0. 세션 상태 초기화 (코드 맨 윗부분에 넣어줘!) ---
+if 'menu_select' not in st.session_state:
+    st.session_state.menu_select = '🗓️ 주기별 루틴'
+if 'special_page' not in st.session_state:
+    st.session_state.special_page = None
+
 # --- 1. 구글 시트 및 데이터 기본 설정 ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 
@@ -243,44 +250,75 @@ with st.sidebar:
 
     st.divider()
 
-    # 화장대 리스트 서랍
-    with st.expander("💄 내 화장대 (무기 목록)", expanded=False):
-        st.markdown("""
-        **💧 토너 및 에센스**
-        * 더랩 올리고 히알루론산 토너 (속건조)
-        * 라로슈포제 톨레리앙 로션 (장벽/진정)
-        * 비플레인 녹두 LHA 토너 (순한 닦토)
-        * AHC 허브 솔루션 토너 (피지 조절)
-        * 아로마티카 로즈마리 에센스 (결 정돈)
+ # --- 5. 메인 화면 출력 로직 ---
+if st.session_state.menu_select == "🗓️ 주기별 루틴":
+    # 👆 사이드바에서 '주기별 루틴'을 골랐을 때 나오는 원래 화면!
+    if saved_date:
+        current_day = calculate_cycle_day(saved_date)
+        if current_day:
+            display_hormone_guide(current_day)
+        else:
+            st.error("날짜 형식에 문제가 있어!")
 
-        **✨ 앰플 및 세럼**
-        * 디오디너리 히알루로닉 (수분/진정)
-        * 디오디너리 나이아신아마이드 (피지/미백)
-        * 디오디너리 알파 아르부틴 (잡티/미백)
-        * 디오디너리 매트릭실 (전체 탄력)
-        * 보르피린 앰플 (국소 볼륨)
-
-        **🛡️ 크림 및 아이케어**
-        * 구달 청귤 비타C 아이크림
-        * 에스트라 아토베리어 365 크림
-        * 센텔리안24 마데카크림 타임리버스
-        * 라로슈포제 시카플라스트 밤 B5+
-
-        **☀️ 스페셜 케어**
-        * 수이사이 효소 파우더 워시 (묵은 각질)
-        * 셀리맥스 잡티미백 (선크림)
-        * 원씽 로즈힙열매오일 (보습막)
-        * VT 리들샷 300 (턴오버 스페셜)
-        * 애크린겔 바하 (요철/피지 녹이기)
-        * 녹두 클레이 모공팩 (쿨링/피지 흡착)
-
-        **⚡ 뷰티 디바이스**
-        * 마데카 프라임 (흡수/브라이트닝/초음파)
-        """)
-
-if saved_date:
-    current_day = calculate_cycle_day(saved_date)
-    if current_day:
-        display_hormone_guide(current_day)
+else:
+    # 👆 사이드바에서 '스페셜 케어 도감'을 골랐을 때 나오는 새로운 화면!
+    # --- 🌋 스페셜 케어 도감 상세 페이지 ---
+    selected_item = st.session_state.get('special_page', '선택하세요')
+    
+    if selected_item == "선택하세요":
+        st.info("👈 왼쪽 사이드바에서 궁금한 무기를 선택해 봐! 🔍")
     else:
-        st.error("날짜 형식에 문제가 있어!")
+        st.subheader(f"🌋 {selected_item} 사용 설명서")
+        
+        # 1. 리들샷 300
+        if selected_item == "💉 리들샷 300":
+            st.markdown("""
+            **🎯 목적:** 피부 턴오버 촉진 & 유효 성분 흡수 극대화
+            * **사용법:** 세안 후 첫 단계에서 맨 얼굴에 도포. 따끔따끔한 느낌이 들어야 정상이야! 손바닥으로 꾹꾹 누르며 흡수시켜 줘.
+            * **🚨 주의사항:** **마데카 프라임 기기 절대 금지!** 다음 날 선크림 필수!
+            """)
+
+        # 2. 마데카 초음파
+        elif selected_item == "⚡ 마데카 초음파":
+            st.markdown("""
+            **🎯 목적:** 피부 속 탄력 개선 & 리프팅
+            * **사용법:** 젤이나 마스크팩을 얹은 상태에서 '초음파 모드'로 천천히 롤링해 줘.
+            * **꿀팁:** 황금기(2단계)에 미백 마스크팩이랑 같이 쓰면 효과가 두 배! ✨
+            """)
+
+        # 3. 효소 파우더워시
+        elif selected_item == "🧼 효소 파우더워시":
+            st.markdown("""
+            **🎯 목적:** 자극 없는 각질 제거 & 모공 청소
+            * **사용법:** 손바닥에 가루를 덜고 물을 살짝 섞어 거품을 충분히 낸 뒤, 나비존과 턱 위주로 부드럽게 굴려줘.
+            * **정량:** 동전 크기만큼 1회분!
+            """)
+
+        # 4. 애크린겔(바하)
+        elif selected_item == "🧫 애크린겔(바하)":
+            st.markdown("""
+            **🎯 목적:** 좁쌀 여드름 & 요철 박멸
+            * **정량:** 고민 부위당 **딱 쌀알 한 톨 🌾**
+            * **사용법:** 기초 마지막 단계에서 요철이 심한 부위에만 아주 얇게 코팅하듯 발라줘. 얼굴 전체 도포는 절대 안 돼!
+            """)
+
+        # 5. 녹두 모델링팩
+        elif selected_item == "🌿 녹두 모델링팩":
+            st.markdown("""
+            **🎯 목적:** 피부 열감 내리기 & 수분 진정
+            * **사용법:** 앰플을 듬뿍 바른 뒤, 모델링팩을 도톰하게 올려서 15~20분 뒤 떼어내기.
+            * **꿀팁:** 땀 흘리고 온 날이나 생리 직전 피부 뒤집어지려 할 때 필수템! 🏃‍♀️
+            """)
+
+        # 6. 반신욕 루틴
+        elif selected_item == "🛁 반신욕 루틴":
+            st.markdown("""
+            **🎯 목적:** 순환 촉진 & 노폐물 배출
+            * **방법:** 물 온도는 38~40도, 시간은 15~20분 내외로! 땀이 살짝 나기 시작할 때가 딱 좋아.
+            * **루틴 연계:** 반신욕 후 모공이 열렸을 때 효소 세안이나 모델링팩을 하면 효과가 극대화돼. 🧖‍♀️
+            """)
+
+        st.divider()
+        if st.button("🗓️ 다시 주기별 루틴 보러 가기"):
+            st.session_state.menu_select = "🗓️ 주기별 루틴"
+            st.rerun()
