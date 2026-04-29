@@ -5,3 +5,4 @@
 /workout.txt
 /운동기록(개인).py
 /호르몬주기.py
+.streamlit/secrets.toml
