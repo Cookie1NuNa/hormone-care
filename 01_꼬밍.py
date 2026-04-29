@@ -302,7 +302,7 @@ with st.sidebar:
     # 2️⃣ 스페셜 케어 도감 모드일 때 사이드바 설정
     else:
         st.subheader("💄 무기 백과사전")
-        special_list = ["💉 리들샷 300", "⚡ 마데카 초음파", "🧼 효소 파우더워시", "🧫 애크린겔(바하)", "🌿 녹두 모델링팩", "🛁 반신욕 루틴"]
+        special_list = ["💉 리들샷 300", "⚡ 마데카 초음파", "🧼 효소 파우더워시", "🧫 애크린겔(바하)", "🌿 녹두 클레이 모공팩", "🛁 반신욕 루틴"]
         st.session_state.special_page = st.selectbox("어떤 무기가 궁금해?", special_list)
 
 
