@@ -4,12 +4,6 @@ import pandas as pd
 import datetime
 
 
-# --- 0. 세션 상태 초기화 (코드 맨 윗부분에 넣어줘!) ---
-if 'menu_select' not in st.session_state:
-    st.session_state.menu_select = '🗓️ 주기별 루틴'
-if 'special_page' not in st.session_state:
-    st.session_state.special_page = None
-
 # --- 1. 구글 시트 및 데이터 기본 설정 ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 
@@ -232,27 +226,49 @@ def display_hormone_guide(day):
     * **사용법:** 손등에 1방울 덜어낸 다음, 네 번째 손가락(약지)으로 꺼진 부위에만 콕콕 찍어서 두드려 발라줘. 전체적으로 바르면 유분 폭발하니 국소 부위만 공략하기!
     """)
 
-# --- 4. 메인 실행 & 사이드바 화면 ---
+# --- 4. 세션 상태 초기화 (메인 실행 직전에 위치) ---
+if 'menu_select' not in st.session_state:
+    st.session_state.menu_select = '🗓️ 주기별 루틴'
+if 'special_page' not in st.session_state:
+    st.session_state.special_page = "💉 리들샷 300" # 기본값 설정
+
+# --- 5. 데이터 로드 및 사이드바 ---
 saved_date = load_user_data()
 
 with st.sidebar:
-    st.header("⚙️ 루틴 설정")
-    if saved_date:
-        st.write(f"📅 마지막 생리 시작일: `{saved_date}`")
+    st.header("⚙️ 뷰티 설정")
     
-    new_date = st.date_input("날짜 변경", 
-                             value=datetime.datetime.strptime(saved_date, "%Y-%m-%d").date() if saved_date else datetime.date.today())
+    # 메뉴 선택 라디오 버튼
+    st.session_state.menu_select = st.radio(
+        "보고 싶은 화면을 골라줘!",
+        ["🗓️ 주기별 루틴", "🌋 스페셜 케어 도감"]
+    )
     
-    if st.button("날짜 저장하기"):
-        save_user_data(str(new_date))
-        st.success("데이터 장부(시트)에 완벽하게 저장됐어!")
-        st.rerun()
-
     st.divider()
 
- # --- 5. 메인 화면 출력 로직 ---
+    # 1️⃣ 주기별 루틴 모드일 때 사이드바 설정
+    if st.session_state.menu_select == "🗓️ 주기별 루틴":
+        if saved_date:
+            st.write(f"📅 마지막 생리 시작일: `{saved_date}`")
+        
+        new_date = st.date_input("날짜 변경", 
+                                 value=datetime.datetime.strptime(saved_date, "%Y-%m-%d").date() if saved_date else datetime.date.today())
+        
+        if st.button("날짜 저장하기"):
+            save_user_data(str(new_date))
+            st.success("데이터 장부에 완벽하게 저장됐어!")
+            st.rerun()
+
+    # 2️⃣ 스페셜 케어 도감 모드일 때 사이드바 설정
+    else:
+        st.subheader("💄 무기 백과사전")
+        special_list = ["💉 리들샷 300", "⚡ 마데카 초음파", "🧼 효소 파우더워시", "🧫 애크린겔(바하)", "🌿 녹두 모델링팩", "🛁 반신욕 루틴"]
+        st.session_state.special_page = st.selectbox("어떤 무기가 궁금해?", special_list)
+
+
+# --- 6. 메인 화면 출력 로직 ---
+# A. 주기별 루틴 화면
 if st.session_state.menu_select == "🗓️ 주기별 루틴":
-    # 👆 사이드바에서 '주기별 루틴'을 골랐을 때 나오는 원래 화면!
     if saved_date:
         current_day = calculate_cycle_day(saved_date)
         if current_day:
@@ -260,65 +276,46 @@ if st.session_state.menu_select == "🗓️ 주기별 루틴":
         else:
             st.error("날짜 형식에 문제가 있어!")
 
+# B. 스페셜 케어 도감 화면
 else:
-    # 👆 사이드바에서 '스페셜 케어 도감'을 골랐을 때 나오는 새로운 화면!
-    # --- 🌋 스페셜 케어 도감 상세 페이지 ---
-    selected_item = st.session_state.get('special_page', '선택하세요')
+    selected_item = st.session_state.special_page
+    st.subheader(f"🌋 {selected_item} 사용 설명서")
     
-    if selected_item == "선택하세요":
-        st.info("👈 왼쪽 사이드바에서 궁금한 무기를 선택해 봐! 🔍")
-    else:
-        st.subheader(f"🌋 {selected_item} 사용 설명서")
-        
-        # 1. 리들샷 300
-        if selected_item == "💉 리들샷 300":
-            st.markdown("""
-            **🎯 목적:** 피부 턴오버 촉진 & 유효 성분 흡수 극대화
-            * **사용법:** 세안 후 첫 단계에서 맨 얼굴에 도포. 따끔따끔한 느낌이 들어야 정상이야! 손바닥으로 꾹꾹 누르며 흡수시켜 줘.
-            * **🚨 주의사항:** **마데카 프라임 기기 절대 금지!** 다음 날 선크림 필수!
-            """)
+    if selected_item == "💉 리들샷 300":
+        st.markdown("""
+        **🎯 목적:** 피부 턴오버 촉진 & 유효 성분 흡수 극대화
+        * **사용법:** 세안 후 첫 단계에서 맨 얼굴에 도포. 따끔따끔한 느낌이 들어야 정상! 손바닥으로 꾹꾹 누르며 흡수시켜 줘.
+        * **🚨 주의사항:** **마데카 프라임 기기 절대 금지!** 다음 날 선크림 필수!
+        """)
+    elif selected_item == "⚡ 마데카 초음파":
+        st.markdown("""
+        **🎯 목적:** 피부 속 탄력 개선 & 리프팅
+        * **사용법:** 젤이나 마스크팩을 얹은 상태에서 '초음파 모드'로 천천히 롤링해 줘.
+        * **꿀팁:** 황금기(2단계)에 미백 마스크팩이랑 같이 쓰면 효과가 두 배! ✨
+        """)
+    elif selected_item == "🧼 효소 파우더워시":
+        st.markdown("""
+        **🎯 목적:** 자극 없는 각질 제거 & 모공 청소
+        * **사용법:** 손바닥에 가루를 덜고 물을 살짝 섞어 거품을 낸 뒤, 나비존 위주로 부드럽게 굴려줘.
+        """)
+    elif selected_item == "🧫 애크린겔(바하)":
+        st.markdown("""
+        **🎯 목적:** 좁쌀 여드름 & 요철 박멸
+        * **정량:** 고민 부위당 **딱 쌀알 한 톨 🌾**
+        * **사용법:** 기초 마지막 단계에서 요철 부위에만 얇게 톡톡! 얼굴 전체는 절대 금지!
+        """)
+    elif selected_item == "🌿 녹두 모델링팩":
+        st.markdown("""
+        **🎯 목적:** 피부 열감 내리기 & 수분 진정
+        * **사용법:** 앰플 바른 뒤 도톰하게 올려서 15~20분 뒤 떼어내기.
+        """)
+    elif selected_item == "🛁 반신욕 루틴":
+        st.markdown("""
+        **🎯 목적:** 순환 촉진 & 노폐물 배출
+        * **방법:** 물 온도 38~40도, 시간은 15~20분! 땀이 살짝 날 때가 베스트!
+        """)
 
-        # 2. 마데카 초음파
-        elif selected_item == "⚡ 마데카 초음파":
-            st.markdown("""
-            **🎯 목적:** 피부 속 탄력 개선 & 리프팅
-            * **사용법:** 젤이나 마스크팩을 얹은 상태에서 '초음파 모드'로 천천히 롤링해 줘.
-            * **꿀팁:** 황금기(2단계)에 미백 마스크팩이랑 같이 쓰면 효과가 두 배! ✨
-            """)
-
-        # 3. 효소 파우더워시
-        elif selected_item == "🧼 효소 파우더워시":
-            st.markdown("""
-            **🎯 목적:** 자극 없는 각질 제거 & 모공 청소
-            * **사용법:** 손바닥에 가루를 덜고 물을 살짝 섞어 거품을 충분히 낸 뒤, 나비존과 턱 위주로 부드럽게 굴려줘.
-            * **정량:** 동전 크기만큼 1회분!
-            """)
-
-        # 4. 애크린겔(바하)
-        elif selected_item == "🧫 애크린겔(바하)":
-            st.markdown("""
-            **🎯 목적:** 좁쌀 여드름 & 요철 박멸
-            * **정량:** 고민 부위당 **딱 쌀알 한 톨 🌾**
-            * **사용법:** 기초 마지막 단계에서 요철이 심한 부위에만 아주 얇게 코팅하듯 발라줘. 얼굴 전체 도포는 절대 안 돼!
-            """)
-
-        # 5. 녹두 모델링팩
-        elif selected_item == "🌿 녹두 모델링팩":
-            st.markdown("""
-            **🎯 목적:** 피부 열감 내리기 & 수분 진정
-            * **사용법:** 앰플을 듬뿍 바른 뒤, 모델링팩을 도톰하게 올려서 15~20분 뒤 떼어내기.
-            * **꿀팁:** 땀 흘리고 온 날이나 생리 직전 피부 뒤집어지려 할 때 필수템! 🏃‍♀️
-            """)
-
-        # 6. 반신욕 루틴
-        elif selected_item == "🛁 반신욕 루틴":
-            st.markdown("""
-            **🎯 목적:** 순환 촉진 & 노폐물 배출
-            * **방법:** 물 온도는 38~40도, 시간은 15~20분 내외로! 땀이 살짝 나기 시작할 때가 딱 좋아.
-            * **루틴 연계:** 반신욕 후 모공이 열렸을 때 효소 세안이나 모델링팩을 하면 효과가 극대화돼. 🧖‍♀️
-            """)
-
-        st.divider()
-        if st.button("🗓️ 다시 주기별 루틴 보러 가기"):
-            st.session_state.menu_select = "🗓️ 주기별 루틴"
-            st.rerun()
+    st.divider()
+    if st.button("🗓️ 다시 주기별 루틴 보러 가기"):
+        st.session_state.menu_select = "🗓️ 주기별 루틴"
+        st.rerun()
