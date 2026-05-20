@@ -56,8 +56,8 @@ def show_routine_box(time, title, items):
 
 # --- 3. ⭐️ 내 몸 주식회사 가이드 ---
 def display_hormone_guide(day):
-    progress_val = min(day / 28, 1.0)
-    st.progress(progress_val, text=f"현재 {day}일차 / 28일 주기 ({int(progress_val*100)}%) 진행 중")
+    progress_val = min(day / 31, 1.0)
+    st.progress(progress_val, text=f"현재 {day}일차 / 31일 주기 ({int(progress_val*100)}%) 진행 중")
 
     st.markdown(f"""
         <h3 style='text-align: center; margin-bottom: -10px;'>🥚 내 피부 깐달걀 프로젝트: Day {day}</h3>
@@ -72,14 +72,6 @@ def display_hormone_guide(day):
     
     
     # 🌟 생리 주기 if/elif 시작하기 바로 위쪽에 넣기!
-    
-    st.markdown("### 🛀 매일 고정 바디 루틴 (주기 무관)")
-    st.success("""
-    **💧 샤워 직후 3분 골든타임 사수!**
-    1. **물기 살짝:** 수건으로 벅벅 닦지 말고, 물기가 살짝 맺혀있을 정도로만 톡톡 닦기!
-    2. **바디로션 코팅:** 수증기가 꽉 찬 욕실 안에서 바로 바디로션을 전신에 듬뿍 발라 수분 가두기 🧴
-    3. **호호바 오일 레이어링:** 팔꿈치, 발뒤꿈치, 정강이 등 유독 건조한 부위에는 호호바 오일 1~2방울을 덧발라서 철벽 보습막 치기 ✨
-    """)
     
     st.divider() # ➖ 깔끔하게 가로선 하나 딱 그어주기!
 
