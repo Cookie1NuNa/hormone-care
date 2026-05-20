@@ -9,7 +9,7 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 
 def load_user_data():
     try:
-        df = conn.read()
+        df = conn.read(ttl=0)
         # "봉이"를 찾아라! 🕵️‍♀️
         user_row = df[df['name'] == "봉이"] 
         if not user_row.empty:
